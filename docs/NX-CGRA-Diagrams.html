@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NX-CGRA 论文分析报告 - Mermaid 图表集</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #005B9A;
+            --secondary-blue: #0D6EFD;
+            --accent-red: #d9534f;
+            --background-white: #FFFFFF;
+            --background-light: #f0f2f5;
+            --background-gray: #f8f9fa;
+            --text-primary: #212529;
+            --text-secondary: #333333;
+            --text-muted: #6c757d;
+            --border-light: #e9ecef;
+            --border-medium: #dee2e6;
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 32px;
+            --spacing-xl: 40px;
+            --spacing-xxl: 48px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .page-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .slide-container {
+            width: 1600px;
+            min-height: 900px;
+            max-height: 95vh;
+            background-color: var(--background-white);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slide-title {
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border-light);
+        }
+        
+        .slide-subtitle {
+            font-size: 24px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: minmax(350px, 1fr);
+            gap: 20px;
+            flex: 1;
+            overflow-y: auto;
+            align-items: stretch;
+        }
+        
+        .chart-card {
+            background-color: var(--background-gray);
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            min-height: 350px;
+            max-height: 100%;
+        }
+        
+        .chart-card.full-width {
+            grid-column: span 3;
+        }
+        
+        .chart-card.half-width {
+            grid-column: span 2;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 12px;
+            padding-left: 12px;
+            border-left: 4px solid var(--secondary-blue);
+        }
+        
+        .chart-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 280px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .mermaid {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .mermaid svg {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+        }
+        
+        .slide-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            margin-top: 20px;
+            border-top: 1px solid var(--border-light);
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .slide-nav {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        .nav-btn {
+            padding: 12px 24px;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-btn:hover {
+            background-color: var(--secondary-blue);
+        }
+        
+        .nav-btn:disabled {
+            background-color: var(--text-muted);
+            cursor: not-allowed;
+        }
+        
+        .page-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 100;
+        }
+        
+        .slide {
+            display: none;
+        }
+        
+        .slide.active {
+            display: flex;
+        }
+        
+        @media (max-width: 1700px) {
+            .slide-container {
+                width: 100%;
+                max-width: 1600px;
+                min-height: 900px;
+                max-height: none;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: minmax(300px, auto);
+            }
+            
+            .chart-card.full-width {
+                grid-column: span 2;
+            }
+            
+            .chart-card.half-width {
+                grid-column: span 2;
+            }
+            
+            .chart-card {
+                min-height: 300px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                grid-auto-rows: minmax(250px, auto);
+            }
+            
+            .chart-card.full-width,
+            .chart-card.half-width {
+                grid-column: span 1;
+            }
+            
+            .chart-card {
+                min-height: 250px;
+            }
+            
+            .slide-title {
+                font-size: 28px;
+            }
+            
+            .slide-subtitle {
+                font-size: 18px;
+            }
+            
+            .chart-content {
+                min-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <!-- Slide 1: Cover -->
+        <div class="slide-container slide active" id="slide-1">
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <h1 class="slide-title" style="border-bottom: none; font-size: 48px;">NX-CGRA 论文分析报告</h1>
+                <p class="slide-subtitle" style="margin-top: 20px;">Mermaid 图表集合</p>
+                <div style="margin-top: 60px; color: var(--text-muted);">
+                    <p style="font-size: 18px; margin-bottom: 8px;">基于 arXiv:2511.17235</p>
+                    <p style="font-size: 16px;">图表生成日期: 2026-02-23</p>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>NX-CGRA Technical Analysis Report</span>
+                <span>Slide 1 / 6</span>
+            </div>
+        </div>
+
+        <!-- Slide 2: System Architecture -->
+        <div class="slide-container slide" id="slide-2">
+            <h2 class="slide-title">NX-CGRA 系统架构</h2>
+            <div class="content-grid">
+                <div class="chart-card half-width">
+                    <div class="chart-title">系统整体架构</div>
+                    <div class="chart-content">
+                        <div class="mermaid">
+flowchart TB
+    subgraph NX-CGRA_Subsystem["NX-CGRA Subsystem"]
+        direction TB
+        
+        subgraph Memory["NX-Memory"]
+            MC[NX-Memory Controller]
+            CM[NX-Context Memory]
+        end
+        
+        subgraph Array["NX-Array 4×6"]
+            subgraph Row1["Row 1"]
+                PE1[PE] --- MOB1[MOB]
+                PE2[PE] --- MOB2[MOB]
+            end
+            subgraph Row2["Row 2"]
+                PE3[PE] --- MOB3[MOB]
+                PE4[PE] --- MOB4[MOB]
+            end
+            subgraph Row3["Row 3"]
+                PE5[PE] --- MOB5[MOB]
+                PE6[PE] --- MOB6[MOB]
+            end
+            subgraph Row4["Row 4"]
+                PE7[PE] --- MOB7[MOB]
+                PE8[PE] --- MOB8[MOB]
+            end
+        end
+        
+        GEC[Global Execution Controller]
+    end
+    
+    MC --> Array
+    CM --> Array
+    GEC --> Array
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">PE 内部架构</div>
+                    <div class="chart-content">
+                        <div class="mermaid">
+flowchart TB
+    subgraph PE["Processing Element (PE)"]
+        direction TB
+        
+        CG[Clock Gate Unit]
+        TV[Temporary Value Register]
+        
+        subgraph ALU["ALU Units"]
+            DIV32[DIV32]
+            MUL["MUL16/32"]
+            ALU8[ALU8]
+            ALU32[ALU32]
+        end
+        
+        subgraph Controller["Control Unit"]
+            DEC[Instruction Decoder]
+            CS[Core Sleep Unit]
+            RI[Router Interface]
+        end
+        
+        subgraph RF["Register File"]
+            MRI[Micro-Code Instruction RF]
+            ICR[Inline Constant RF]
+        end
+        
+        CG --> TV
+        TV --> ALU
+        ALU --> Controller
+        Controller --> RF
+    end
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">编译工具链</div>
+                    <div class="chart-content">
+                        <div class="mermaid">
+flowchart LR
+    A[Source Code] --> B[Clang]
+    B --> C[LLVM-IR]
+    C --> D[Mapping & Scheduling]
+    D --> E[HELIX Compiler]
+    E --> F[Assembly Code]
+    F --> G[Optimizer]
+    G --> H[Binary Code]
+    H --> I[Micro-code Isolation]
+    
+    D -.->|Static Dataflow Graph| D
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Architecture Overview</span>
+                <span>Slide 2 / 6</span>
+            </div>
+        </div>
+
+        <!-- Slide 3: Benchmarks & Area -->
+        <div class="slide-container slide" id="slide-3">
+            <h2 class="slide-title">基准测试与硬件分析</h2>
+            <div class="content-grid">
+                <div class="chart-card half-width">
+                    <div class="chart-title">基准测试模型对比</div>
+                    <div class="chart-content">
+                        <div class="mermaid">
+flowchart LR
+    subgraph Benchmarks["Transformer Benchmarks"]
+        direction TB
+        
+        subgraph Vision["Vision Transformer"]
+            TViT[TinyViT]
+            FViT[FastViT]
+            EF2[EfficientFormerV2]
+        end
+        
+        subgraph NLP["NLP Transformer"]
+            MB[MobileBERT]
+            TB[TinyBERT]
+            DB[DistilBERT]
+        end
+        
+        subgraph Speech["Speech Transformer"]
+            WT[Whisper Tiny]
+        end
+    end
+    
+    Benchmarks -->|"Kernel Analysis"| KA[Kernel Composition]
+    
+    subgraph KA["Kernel Analysis"]
+        C2D[Conv 2D: 25-65%]
+        GEMM[GEMM: 15-70%]
+        GELU[GELU: ~5%]
+        NORM[Norm: ~5%]
+        QNT[Quant: 0-5%]
+        SM[Softmax: 3-5%]
+    end
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">硬件面积分布</div>
+                    <div class="chart-content">
+                        <div class="mermaid">
+pie
+    title NX-CGRA Area Distribution
+    "NX-Array (PE+MOB)" : 92.23
+    "Context Memory" : 7.49
+    "Memory Map" : 0.12
+    "Memory Controller" : 0.10
+    "Other" : 0.06
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Benchmark & Hardware Analysis</span>
+                <span>Slide 3 / 6</span>
+            </div>
+        </div>
+
+        <!-- Slide 4: Performance Comparison -->
+        <div class="slide-container slide" id="slide-4">
+            <h2 class="slide-title">性能指标对比</h2>
+            <div class="content-grid">
+                <div class="chart-card">
+                    <div class="chart-title">线性函数 TOPS/W/mm²</div>
+                    <div class="chart-content">
+                        <div class="mermaid">
+xychart-beta
+    title "Linear Functions TOPS/W/mm² Comparison"
+    x-axis ["SIGMA", "CONNA", "Gemmini", "DIANA", "RBE", "RedMulE", "OpenGEMM", "NX-CGRA"]
+    y-axis "TOPS/W/mm²" 0 --> 12
+    bar [0.0073, 0.52, 0.68, 0.46, 5.12, 2.28, 7.55, 11.29]
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">非线性函数 TOPS/W/mm²</div>
+                    <div class="chart-content">
+                        <div class="mermaid">
+xychart-beta
+    title "Non-Linear Functions TOPS/W/mm² Comparison"
+    x-axis ["OPTIMUS", "SpAtten", "ELSA", "Wang et al.", "Keller et al.", "ITA", "TranCIM", "SoftAct", "NX-CGRA"]
+    y-axis "TOPS/W/mm²" 0 --> 650
+    bar [0.13, 0.03, 0.89, 4.04, 624.84, 97.68, 3.06, 188.02, 3.83]
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">内核性能指标</div>
+                    <div class="chart-content">
+                        <div class="mermaid">
+flowchart TB
+    subgraph Performance["Kernel Performance Metrics"]
+        direction LR
+        
+        subgraph Conv["Conv 2D"]
+            C_MOPS["1,902 MOPS"]
+            C_GOPS["10.68 GOPS/mm²"]
+            C_TOPSW["1.28 TOPS/W"]
+            C_TOPSWMM["7.20 TOPS/W/mm²"]
+        end
+        
+        subgraph GEMM_["GEMM"]
+            G_MOPS["3,040 MOPS"]
+            G_GOPS["17.08 GOPS/mm²"]
+            G_TOPSW["2.01 TOPS/W"]
+            G_TOPSWMM["11.29 TOPS/W/mm²"]
+        end
+        
+        subgraph GELU_["GELU"]
+            GE_MOPS["636 MOPS"]
+            GE_GOPS["3.57 GOPS/mm²"]
+            GE_TOPSW["0.39 TOPS/W"]
+            GE_TOPSWMM["2.21 TOPS/W/mm²"]
+        end
+        
+        subgraph Softmax_["Softmax"]
+            S_MOPS["1,102 MOPS"]
+            S_GOPS["6.19 GOPS/mm²"]
+            S_TOPSW["0.68 TOPS/W"]
+            S_TOPSWMM["3.83 TOPS/W/mm²"]
+        end
+    end
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Performance Metrics</span>
+                <span>Slide 4 / 6</span>
+            </div>
+        </div>
+
+        <!-- Slide 5: Comparison & Challenges -->
+        <div class="slide-container slide" id="slide-5">
+            <h2 class="slide-title">加速器对比与部署挑战</h2>
+            <div class="content-grid">
+                <div class="chart-card">
+                    <div class="chart-title">与现有加速器对比</div>
+                    <div class="chart-content">
+                        <div class="mermaid">
+flowchart TB
+    subgraph Comparison["Accelerator Comparison"]
+        direction LR
+        
+        subgraph Linear["Linear Functions"]
+            L1["SIGMA: 0.0073 TOPS/W/mm²"]
+            L2["CONNA: 0.52 TOPS/W/mm²"]
+            L3["Gemmini: 0.68 TOPS/W/mm²"]
+            L4["RBE: 5.12 TOPS/W/mm²"]
+            L5["OpenGEMM: 7.55 TOPS/W/mm²"]
+            L6["NX-CGRA: 11.29 TOPS/W/mm² ★"]
+        end
+        
+        subgraph NonLinear["Non-Linear Functions"]
+            NL1["OPTIMUS: 0.13 TOPS/W/mm²"]
+            NL2["SpAtten: 0.03 TOPS/W/mm²"]
+            NL3["ITA: 97.68 TOPS/W/mm²"]
+            NL4["SoftAct: 188.02 TOPS/W/mm²"]
+            NL5["NX-CGRA: 3.83 TOPS/W/mm²"]
+        end
+    end
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card half-width">
+                    <div class="chart-title">Transformer 部署挑战</div>
+                    <div class="chart-content">
+                        <div class="mermaid">
+flowchart TB
+    subgraph Challenges["Edge Transformer Challenges"]
+        WL["Workload Diversity"]
+        EE["Energy Efficiency"]
+        AL["Area Limit"]
+        FL["Flexibility Requirement"]
+        
+        WL -->|"Includes"| Kernels
+        subgraph Kernels["Various Kernels"]
+            GEMM[GEMM]
+            CONV[Convolution]
+            SOFT[Softmax]
+            GELU[GELU]
+        end
+        
+        EE -->|"Constraints"| PWR["Power Budget"]
+        AL -->|"Limits"| SA["Silicon Area"]
+        FL -->|"Needs"| TV["Transformer Variants"]
+    end
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Comparison & Challenges</span>
+                <span>Slide 5 / 6</span>
+            </div>
+        </div>
+
+        <!-- Slide 6: Innovations & Use Cases -->
+        <div class="slide-container slide" id="slide-6">
+            <h2 class="slide-title">技术创新与应用场景</h2>
+            <div class="content-grid">
+                <div class="chart-card">
+                    <div class="chart-title">技术创新点</div>
+                    <div class="chart-content">
+                        <div class="mermaid">
+flowchart TB
+    subgraph Innovations["NX-CGRA Technical Innovations"]
+        
+        subgraph Arch["Architecture Innovation"]
+            A1["MIMD Execution Model"]
+            A2["Heterogeneous Core Design"]
+            A3["Static Scheduling Compiler"]
+        end
+        
+        subgraph Area["Area Optimization"]
+            B1["Total Area: 0.178mm²"]
+            B2["92.23% for Compute Array"]
+            B3["7.49% for Context Memory"]
+        end
+        
+        subgraph Efficiency["Energy Efficiency"]
+            C1["Linear: 2.01 TOPS/W"]
+            C2["Non-Linear: 0.39-0.68 TOPS/W"]
+            C3["Area Efficiency: 11.29 TOPS/W/mm²"]
+        end
+    end
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card half-width">
+                    <div class="chart-title">适用场景</div>
+                    <div class="chart-content">
+                        <div class="mermaid">
+flowchart TB
+    subgraph UseCases["NX-CGRA Application Scenarios"]
+        
+        E1["Edge Transformer Inference"]
+        E2["Power & Silicon Constrained Apps"]
+        E3["Multi-Model Support Systems"]
+        E4["Scalable AI Hardware Design"]
+        
+        E1 -->|"Requires"| LLE["Low Latency Execution"]
+        E2 -->|"Needs"| HEE["High Energy Efficiency"]
+        E3 -->|"Demands"| PF["Programmable Flexibility"]
+        E4 -->|"Seeks"| SA["Small Area"]
+        
+        LLE -->|"Enables"| SC["Smart Cameras"]
+        HEE -->|"Enables"| EW["Edge Wearables"]
+        PF -->|"Enables"| IoT["IoT Devices"]
+        SA -->|"Enables"| Mobile["Mobile SoC Integration"]
+    end
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Innovations & Use Cases</span>
+                <span>Slide 6 / 6</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="slide-nav">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">上一页</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">下一页</button>
+    </div>
+
+    <div class="page-indicator" id="pageIndicator">1 / 6</div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            themeCSS: `
+                .node rect, .node circle, .node polygon {
+                    fill: #f8f9fa;
+                    stroke: #005B9A;
+                    stroke-width: 2px;
+                }
+                .node .label {
+                    color: #212529;
+                    font-family: "Microsoft YaHei", sans-serif;
+                }
+                .edgePath .path {
+                    stroke: #0D6EFD;
+                    stroke-width: 2px;
+                }
+                .cluster rect {
+                    fill: #f0f2f5;
+                    stroke: #dee2e6;
+                    stroke-width: 1px;
+                }
+            `
+        });
+
+        // Slide navigation
+        let currentSlide = 1;
+        const totalSlides = 6;
+
+        async function renderMermaidDiagrams() {
+            const activeSlide = document.querySelector('.slide.active');
+            if (activeSlide) {
+                const mermaidElements = activeSlide.querySelectorAll('.mermaid');
+                for (const element of mermaidElements) {
+                    try {
+                        // Check if already rendered
+                        if (element.getAttribute('data-processed') === 'true') {
+                            continue;
+                        }
+                        const id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                        const graphDefinition = element.textContent;
+                        const { svg } = await mermaid.render(id, graphDefinition);
+                        
+                        // Add responsive scaling to SVG
+                        const parser = new DOMParser();
+                        const svgDoc = parser.parseFromString(svg, 'image/svg+xml');
+                        const svgElement = svgDoc.querySelector('svg');
+                        
+                        if (svgElement) {
+                            // Remove fixed width and height attributes
+                            svgElement.removeAttribute('width');
+                            svgElement.removeAttribute('height');
+                            // Ensure viewBox is set for proper scaling
+                            if (!svgElement.getAttribute('viewBox')) {
+                                const bbox = svgElement.getBBox ? { width: 800, height: 600 } : { width: 800, height: 600 };
+                                svgElement.setAttribute('viewBox', `0 0 ${bbox.width} ${bbox.height}`);
+                            }
+                            svgElement.style.maxWidth = '100%';
+                            svgElement.style.maxHeight = '100%';
+                            svgElement.style.width = 'auto';
+                            svgElement.style.height = 'auto';
+                            svgElement.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+                        }
+                        
+                        element.innerHTML = svgElement ? svgElement.outerHTML : svg;
+                        element.setAttribute('data-processed', 'true');
+                    } catch (error) {
+                        console.error('Error rendering mermaid diagram:', error);
+                    }
+                }
+            }
+        }
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            
+            if (n > totalSlides) currentSlide = 1;
+            if (n < 1) currentSlide = totalSlides;
+            
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index + 1 === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+            
+            // Update page indicator
+            document.getElementById('pageIndicator').textContent = `${currentSlide} / ${totalSlides}`;
+            
+            // Re-render mermaid diagrams on active slide
+            setTimeout(() => {
+                renderMermaidDiagrams();
+            }, 50);
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        // Initialize slides and render mermaid
+        showSlide(currentSlide);
+
+        // Initial render after DOM is ready
+        window.addEventListener('load', async () => {
+            setTimeout(async () => {
+                await renderMermaidDiagrams();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
