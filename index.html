@@ -27,26 +27,30 @@
       var(--bg);
     color: var(--text);
     display: flex; flex-direction: column; align-items: center;
-    padding: 20px 20px 48px;
+    /* 顶部/底部留出灵动岛与 Home 指示条的安全区 */
+    padding: calc(14px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom));
     -webkit-font-smoothing: antialiased;
   }
 
   /* ===== Tab 栏 ===== */
   .tabbar {
     display: flex; gap: 6px;
+    width: 100%; max-width: 420px;
     background: rgba(255,255,255,.05);
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 5px;
     margin-bottom: 24px;
-    position: sticky; top: 14px;
+    position: sticky; top: calc(10px + env(safe-area-inset-top));
     z-index: 10;
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
   .tabbar button {
     appearance: none; border: 0; cursor: pointer;
     font-size: 14px; font-family: inherit;
-    padding: 8px 20px; border-radius: 999px;
+    flex: 1;
+    padding: 10px 20px; border-radius: 999px;
     background: transparent; color: var(--muted);
     transition: background .18s ease, color .18s ease;
     white-space: nowrap;
@@ -106,7 +110,8 @@
     display: none; flex-direction: column;
   }
   #tab-report iframe {
-    width: 100%; flex: 1; min-height: calc(100vh - 140px);
+    width: 100%; flex: 1;
+    min-height: calc(100vh - 170px - env(safe-area-inset-top));
     border: 1px solid var(--line); border-radius: 20px;
     background: #f8fafc;
   }
@@ -115,6 +120,15 @@
     font-size: 13px; color: var(--muted); margin-top: 12px;
   }
   .report-open a { color: var(--accent); }
+
+  /* ===== 移动端适配（手机竖屏） ===== */
+  @media (max-width: 640px) {
+    body { padding-left: 14px; padding-right: 14px; }
+    .card { padding: 32px 20px; border-radius: 20px; }
+    .avatar { width: 80px; height: 80px; font-size: 30px; }
+    h1 { font-size: 24px; }
+    #tab-report iframe { border-radius: 14px; }
+  }
 </style>
 </head>
 <body>
@@ -184,7 +198,7 @@
       activate(btnReport, btnHome);
       tabHome.style.display = 'none';
       tabReport.style.display = 'flex';
-      if (!loaded) { frame.src = '/chipstack-report.html'; loaded = true; }
+      if (!loaded) { frame.src = 'chipstack-report.html'; loaded = true; }
       document.title = '调研报告 · Yixin';
     });
 
