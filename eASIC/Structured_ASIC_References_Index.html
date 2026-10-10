@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f1117">
+<title>参考文献快速索引 · Yixin</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: rgba(255,255,255,.04);
+    --line: rgba(255,255,255,.09);
+    --text: #e8eaf0;
+    --muted: #9aa0b0;
+    --accent: #7c8cff;
+    --accent2: #4dd0b8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue", "Segoe UI", sans-serif;
+    background:
+      radial-gradient(600px 300px at 15% 0%, rgba(124,140,255,.14), transparent 60%),
+      radial-gradient(500px 320px at 90% 20%, rgba(77,208,184,.10), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    padding: calc(72px + env(safe-area-inset-top)) 20px calc(48px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing: antialiased;
+  }
+  .back {
+    position: fixed;
+    top: calc(12px + env(safe-area-inset-top));
+    left: calc(12px + env(safe-area-inset-left));
+    z-index: 100;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 18px; border-radius: 999px;
+    font-size: 14px; text-decoration: none; color: #fff;
+    background: linear-gradient(135deg, var(--accent), #5a6cf0);
+    box-shadow: 0 4px 16px rgba(124,140,255,.35);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  main {
+    max-width: 780px; margin: 0 auto;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 44px 40px;
+  }
+  h1 { font-size: 26px; letter-spacing: .5px; margin-bottom: 20px; line-height: 1.4;
+       padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 20px; margin: 36px 0 14px; color: var(--accent); }
+  h3 { font-size: 17px; margin: 26px 0 10px; color: var(--accent2); }
+  p  { margin-bottom: 14px; color: var(--text); }
+  li { margin: 6px 0 6px 22px; }
+  ul, ol { margin-bottom: 14px; }
+  strong { color: #fff; }
+  a { color: var(--accent); }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+  blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 4px 16px; margin: 14px 0;
+    color: var(--muted); background: rgba(255,255,255,.03);
+    border-radius: 0 12px 12px 0;
+  }
+  code {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: .88em;
+    background: rgba(255,255,255,.08);
+    padding: 2px 7px; border-radius: 6px;
+  }
+  pre {
+    background: #14161f; border: 1px solid var(--line);
+    border-radius: 14px; padding: 16px 18px;
+    overflow-x: auto; margin: 14px 0;
+  }
+  pre code { background: none; padding: 0; font-size: 13px; line-height: 1.7; }
+  table {
+    border-collapse: collapse; width: 100%;
+    margin: 16px 0; font-size: 14px; display: block; overflow-x: auto;
+  }
+  th, td { border: 1px solid var(--line); padding: 9px 13px; text-align: left; }
+  th { background: rgba(124,140,255,.12); color: #fff; white-space: nowrap; }
+  td { color: var(--text); }
+  @media (max-width: 640px) {
+    body { padding-left: 14px; padding-right: 14px; }
+    main { padding: 30px 20px; border-radius: 18px; }
+    h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">← 返回主页</a>
+<main>
+<h1>参考文献快速索引</h1>
+<p>本文件为《结构化ASIC技术近5年进展调研报告》提供参考文献快速定位指南。</p>
+<h2>快速定位</h2>
+<h3>在线资源</h3>
+<h4>IEEE论文（按DOI/URL）</h4>
+<ol>
+<li>Agile-X项目: https://ieeexplore.ieee.org/document/10745765/</li>
+<li>Via-Programmable DNN: https://ieeexplore.ieee.org/iel8/10904417/10904496/10904711.pdf</li>
+<li>M2A2架构: https://ieeexplore.ieee.org/document/9044426/</li>
+</ol>
+<h4>ArXiv论文（按ID）</h4>
+<ol>
+<li>Mozart框架: https://arxiv.org/abs/2510.08873</li>
+<li>存储加速: https://arxiv.org/abs/2509.23693</li>
+<li>光子处理器: https://arxiv.org/abs/2504.01463</li>
+</ol>
+<h4>厂商技术文档</h4>
+<ol>
+<li>Intel eASIC N5X: https://docs.altera.com/v/u/docs/633246/easic-n5x-product-brief-pb-006</li>
+<li>Intel eASIC主页: https://www.intel.com/content/www/us/en/products/details/easic.html</li>
+<li>Taalas报道: https://www.eetimes.com/taalas-specializes-to-extremes-for-extraordinary-token-speed/</li>
+</ol>
+<h3>本地文档路径</h3>
+<pre><code>/home/Works_2026/01_硬连接推理/
+├── 10-其他Startups/eASIC/
+│   ├── eASIC Corporation 详细分析报告.md                [公司深度分析]
+│   └── eASIC结构化ASIC技术综合调研报告.html              [技术综合]
+├── 01-Taalas/
+│   └── Taalas Specializes to Extremes for Extraordinary Token Speed_EE Times.md  [商业报道]
+└── 结构化ASIC的商业思考/
+    ├── 结构化ASIC的商业考量.md                        [商业模式]
+    ├── 结构化ASIC、FPGA与ASIC技术对比文档.html          [技术对比]
+    └── Architecture_Design_Flow_Highly_Efficient_Structured_ASIC_Analysis.html [架构分析]
+</code></pre>
+<h3>引用格式示例</h3>
+<h4>IEEE格式</h4>
+<p>[1] J. Teifel et al., &quot;Agile-X: A Structured-ASIC Created With a Mask-Less Lithography System,&quot; IEEE Journals, vol. 2025, no. 5, pp. 1-10, May 2025, doi: 10.1109/ISSCC10745765.</p>
+<h4>APA格式</h4>
+<p>Teifel, J., et al. (2025). Agile-X: A structured-ASIC created with a mask-less lithography system enabling low-cost and agile chip fabrication. IEEE Journals &amp; Magazine. https://ieeexplore.ieee.org/document/10745765</p>
+<h4>ArXiv格式</h4>
+<p>Jin, H., et al. (2025). Mozart: A chiplet ecosystem-accelerator codesign framework for composable bespoke application specific integrated circuits. arXiv preprint arXiv:2510.08873v1. https://arxiv.org/abs/2510.08873</p>
+<hr />
+<p><strong>最后更新</strong>: 2026-04-05<br />
+<strong>维护</strong>: OpenCode调研系统</p>
+
+</main>
+</body>
+</html>

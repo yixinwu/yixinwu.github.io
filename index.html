@@ -121,6 +121,35 @@
   }
   .report-open a { color: var(--accent); }
 
+  /* ===== 文章与报告列表 ===== */
+  .articles { margin-top: 28px; text-align: left; }
+  .articles h2 {
+    font-size: 17px; color: var(--muted); font-weight: 600;
+    margin-bottom: 14px; text-align: center; letter-spacing: 1px;
+  }
+  .article-item {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 16px; padding: 16px 18px; margin-bottom: 12px;
+    text-decoration: none; color: var(--text);
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  .article-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(124,140,255,.45);
+    box-shadow: 0 6px 22px rgba(124,140,255,.18);
+  }
+  .article-item .ico {
+    flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 19px;
+    background: rgba(124,140,255,.12);
+  }
+  .article-item .meta { flex: 1; min-width: 0; }
+  .article-item .t { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .article-item .d { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .article-item .arrow { flex: 0 0 auto; color: var(--muted); font-size: 16px; }
+
   /* ===== 移动端适配（手机竖屏） ===== */
   @media (max-width: 640px) {
     body { padding-left: 14px; padding-right: 14px; }
@@ -162,13 +191,59 @@
         <a class="btn ghost" href="https://github.com/yixinwu" target="_blank">GitHub</a>
       </div>
     </div>
+
+    <!-- 文章与报告 -->
+    <div class="articles">
+      <h2>📚 文章与报告</h2>
+      <a class="article-item" href="docs/chipstack-report.html">
+        <span class="ico">📊</span>
+        <span class="meta">
+          <span class="t">ChipStack AI Super Agent 完整调研报告</span>
+          <span class="d" style="display:block">AI Super Agent 产品与技术全景调研</span>
+        </span>
+        <span class="arrow">›</span>
+      </a>
+      <a class="article-item" href="eASIC/Structured_ASIC_Research_Report_2020-2025.html">
+        <span class="ico">🔧</span>
+        <span class="meta">
+          <span class="t">结构化 ASIC 技术近 5 年进展调研报告</span>
+          <span class="d" style="display:block">2020–2025 学术与工业界文献综述</span>
+        </span>
+        <span class="arrow">›</span>
+      </a>
+      <a class="article-item" href="eASIC/eASIC_Corporation_Detailed_Analysis.html">
+        <span class="ico">🏢</span>
+        <span class="meta">
+          <span class="t">eASIC Corporation 详细分析报告</span>
+          <span class="d" style="display:block">公司发展历程、收入估算与 AI 领域投入</span>
+        </span>
+        <span class="arrow">›</span>
+      </a>
+      <a class="article-item" href="eASIC/Structured_ASIC_References_Index.html">
+        <span class="ico">📖</span>
+        <span class="meta">
+          <span class="t">参考文献快速索引</span>
+          <span class="d" style="display:block">结构化 ASIC 调研报告的参考文献定位指南</span>
+        </span>
+        <span class="arrow">›</span>
+      </a>
+      <a class="article-item" href="docs/NX-CGRA-Diagrams.html">
+        <span class="ico">🧩</span>
+        <span class="meta">
+          <span class="t">NX-CGRA 架构图表</span>
+          <span class="d" style="display:block">粗粒度可重构架构设计图解</span>
+        </span>
+        <span class="arrow">›</span>
+      </a>
+    </div>
+
     <footer>© 2026 Yixin · Powered by GitHub Pages</footer>
   </div>
 
   <!-- Tab 2: 调研报告（内嵌加载 chipstack-report.html） -->
   <div id="tab-report">
     <iframe id="report-frame" src="about:blank" title="ChipStack AI Super Agent 完整调研报告"></iframe>
-    <p class="report-open">加载慢？<a href="/chipstack-report.html" target="_blank">在新标签页打开完整报告 →</a></p>
+    <p class="report-open">加载慢？<a href="docs/chipstack-report.html" target="_blank">在新标签页打开完整报告 →</a></p>
   </div>
 
 <script>
@@ -198,7 +273,7 @@
       activate(btnReport, btnHome);
       tabHome.style.display = 'none';
       tabReport.style.display = 'flex';
-      if (!loaded) { frame.src = 'chipstack-report.html'; loaded = true; }
+      if (!loaded) { frame.src = 'docs/chipstack-report.html'; loaded = true; }
       document.title = '调研报告 · Yixin';
     });
 

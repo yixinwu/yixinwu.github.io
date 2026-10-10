@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>NX-CGRA 论文分析报告 - Mermaid 图表集</title>
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <style>
@@ -37,6 +37,24 @@
             background-color: var(--background-light);
             color: var(--text-primary);
             line-height: 1.6;
+        }
+
+        /* 返回主页按钮 */
+        .back-home {
+            position: fixed;
+            top: calc(12px + env(safe-area-inset-top, 0px));
+            left: calc(12px + env(safe-area-inset-left, 0px));
+            z-index: 1000;
+            display: inline-flex;
+            align-items: center;
+            padding: 9px 18px;
+            border-radius: 999px;
+            font-size: 14px;
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(135deg, #005B9A, #0D6EFD);
+            box-shadow: 0 4px 14px rgba(13,110,253,.35);
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
         }
         
         .page-container {
@@ -261,6 +279,7 @@
     </style>
 </head>
 <body>
+    <a class="back-home" href="../index.html">← 返回主页</a>
     <div class="page-container">
         <!-- Slide 1: Cover -->
         <div class="slide-container slide active" id="slide-1">

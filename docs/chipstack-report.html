@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChipStack AI Super Agent 完整调研报告</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e40af;
+            --accent: #7c3aed;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --success: #059669;
+            --warning: #d97706;
+            --code-bg: #f1f5f9;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        /* Top Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+
+        .navbar-brand {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar-brand .logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 4px;
+            list-style: none;
+        }
+
+        .navbar-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .navbar-links a:hover {
+            background: var(--code-bg);
+            color: var(--primary);
+        }
+
+        .navbar-back {
+            text-decoration: none;
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .navbar-back:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #fff;
+            padding: 100px 24px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, rgba(37, 99, 235, 0.15) 0%, transparent 60%);
+        }
+
+        .hero-tag {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            position: relative;
+            letter-spacing: -0.5px;
+        }
+
+        .hero .subtitle {
+            font-size: 18px;
+            color: #94a3b8;
+            max-width: 700px;
+            margin: 0 auto 24px;
+            position: relative;
+        }
+
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        .hero-meta-item span {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* Section */
+        section {
+            margin-bottom: 56px;
+            scroll-margin-top: 80px;
+        }
+
+        section h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        section h2 .num {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        section h3 {
+            font-size: 19px;
+            font-weight: 600;
+            color: var(--text);
+            margin: 28px 0 12px;
+        }
+
+        section > p {
+            color: var(--text);
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .section-line {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+            margin-bottom: 24px;
+        }
+
+        /* Card */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin: 20px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .card-highlight {
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Table */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 16px 0;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table th {
+            background: #f8fafc;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text);
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        table tr:last-child td {
+            border-bottom: none;
+        }
+
+        table tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-green { background: #d1fae5; color: #065f46; }
+        .badge-purple { background: #ede9fe; color: #5b21b6; }
+        .badge-orange { background: #fed7aa; color: #9a3412; }
+        .badge-gray { background: #e2e8f0; color: #475569; }
+
+        /* Stat Grid */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Quote */
+        .quote-box {
+            background: #f8fafc;
+            border-left: 4px solid var(--accent);
+            border-radius: 0 12px 12px 0;
+            padding: 20px 24px;
+            margin: 20px 0;
+        }
+
+        .quote-box p {
+            font-style: italic;
+            color: var(--text);
+            font-size: 15px;
+        }
+
+        .quote-box .author {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+            margin: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 2px var(--border);
+        }
+
+        .timeline-date {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .timeline-content {
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        /* Code block */
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .code-block .comment { color: #64748b; }
+        .code-block .keyword { color: #c084fc; }
+        .code-block .string { color: #86efac; }
+        .code-block .highlight { color: #fbbf24; }
+
+        /* Profile Card */
+        .profile-card {
+            display: flex;
+            gap: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 16px 0;
+        }
+
+        .profile-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .profile-info h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-info .role {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .profile-info p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            background: var(--code-bg);
+            color: var(--text-secondary);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Architecture Diagram */
+        .arch-diagram {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 16px;
+            padding: 28px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Funding bar */
+        .funding-bar {
+            display: flex;
+            height: 40px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .funding-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 28px; }
+            .hero .subtitle { font-size: 15px; }
+            .navbar-links { display: none; }
+            section h2 { font-size: 20px; }
+            .profile-card { flex-direction: column; }
+            .container { padding: 32px 16px 60px; }
+        }
+
+        /* Smooth scroll */
+        html { scroll-behavior: smooth; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="navbar-brand">
+        <div class="logo">CS</div>
+        ChipStack 调研报告
+    </div>
+    <ul class="navbar-links">
+        <li><a href="#news">新闻分析</a></li>
+        <li><a href="#llm">底层LLM</a></li>
+        <li><a href="#company">公司档案</a></li>
+        <li><a href="#tech">核心技术</a></li>
+        <li><a href="#timeline">发展时间线</a></li>
+    </ul>
+    <a href="/" target="_blank" class="navbar-back">
+        ← 返回主页
+    </a>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+    <div class="hero-tag">EDA × Agentic AI 深度调研</div>
+    <h1>ChipStack AI Super Agent 完整调研报告</h1>
+    <p class="subtitle">从 Cadence 新闻稿分析到底层 LLM 架构、从初创公司本体到核心技术全景解读</p>
+    <div class="hero-meta">
+        <div class="hero-meta-item">📅 <span>2026年10月9日</span></div>
+        <div class="hero-meta-item">🏢 <span>Cadence Design Systems (NASDAQ: CDNS)</span></div>
+        <div class="hero-meta-item">🤖 <span>NVIDIA · Google Cloud · OpenAI</span></div>
+    </div>
+</header>
+
+<div class="container">
+
+<!-- ============ Part 1: News Analysis ============ -->
+<section id="news">
+    <h2><span class="num">1</span> Cadence 新闻稿分析</h2>
+    <div class="section-line"></div>
+
+    <div class="card card-highlight">
+        <h3>📰 Cadence 拓展 ChipStack AI Super Agent：新增 RTL 生成与早期 PPA 优化智能体</h3>
+        <p style="color: var(--text-secondary); font-size: 14px;">发布日期：2026年9月22日 · 来源：Cadence Newsroom</p>
+    </div>
+
+    <p>Cadence 宣布为其 <strong>ChipStack™ AI Super Agent</strong> 新增一款 <strong>RTL 生成智能体（RTL Generation Agent）</strong>，将能力从自主验证与调试扩展至<strong>高质量 RTL 创建与优化</strong>，实现前端数字设计与验证的全面自动化。</p>
+
+    <p>该智能体可通过<strong>自然语言提示</strong>驱动，覆盖：以 PPA（功耗、性能、面积）为目标的规格→RTL 生成、RTL 分析与优化，以及对现有 RTL 的设计更新（RTL Upgrade Flow）。</p>
+
+    <h3>关键性能数据</h3>
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-value">24%</div>
+            <div class="stat-label">面积缩减（vs 纯基础模型）</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">18%</div>
+            <div class="stat-label">功耗降低（vs 纯基础模型）</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">100%</div>
+            <div class="stat-label">RTL 功能准确性</div>
+        </div>
+    </div>
+
+    <h3>本田（Honda）客户验证</h3>
+    <p>本田研发中心作为早期合作伙伴，正在<strong>先进汽车 SoC</strong> 上评估该智能体。此类 SoC 对安全性要求极高，且功耗和成本限制严格。</p>
+
+    <div class="quote-box">
+        <p>"借助 Cadence ChipStack AI Super Agent 的 RTL 生成智能体和 AI 驱动的自动化，本田研发部门正致力于提升从规格到 RTL 开发的生产力。"</p>
+        <div class="author">— Tomoya Nishino，本田研发株式会社 SDV 研发中心数字引擎开发部首席工程师兼总经理</div>
+    </div>
+
+    <div class="quote-box">
+        <p>"这些最新的智能体 AI 进展让我们从 AI 辅助工具迈向协同式智能体工作流，其角色更像虚拟设计工程师，能够以专家级的能力驾驭底层技术。"</p>
+        <div class="author">— Chin-Chi Teng，Cadence 高级副总裁兼数字与签核事业部总经理</div>
+    </div>
+
+    <h3>分析要点</h3>
+    <div class="card">
+        <p><strong>1. 从工具到虚拟工程师的范式转变：</strong>Cadence 正在将 AI 从"辅助工具"升级为"自主智能体工作流"，模拟虚拟设计工程师的角色。</p>
+        <p style="margin-top: 12px;"><strong>2. PPA 优化是核心差异化优势：</strong>24% 面积缩减 + 18% 功耗降低 + 100% 功能准确，远超通用大模型代码生成能力。</p>
+        <p style="margin-top: 12px;"><strong>3. 端到端覆盖：</strong>从规格→RTL 生成→优化→验证→实现→签核，构建覆盖芯片设计全流程的 AI 智能体平台。</p>
+    </div>
+
+    <p style="text-align: center; margin-top: 24px;"><strong>上市时间：</strong>扩展后的 ChipStack 和 InnoStack AI Super Agent 功能预计于 <strong>2026 年第四季度</strong>向部分早期体验客户开放。</p>
+</section>
+
+<!-- ============ Part 2: LLM Architecture ============ -->
+<section id="llm">
+    <h2><span class="num">2</span> 底层 LLM 大模型架构</h2>
+    <div class="section-line"></div>
+
+    <div class="card card-highlight">
+        <h3>核心发现：ChipStack 不依赖单一 LLM，采用模型灵活（Model-Agnostic）架构</h3>
+    </div>
+
+    <p>ChipStack 支持多种前沿大模型，客户可根据需求选择云端或本地部署方案：</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>模型</th>
+                    <th>提供方</th>
+                    <th>角色</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="badge badge-green">NVIDIA Nemotron</span></td>
+                    <td>NVIDIA</td>
+                    <td>核心基础模型</td>
+                    <td>Level-5 自主虚拟工程师的主要驱动模型，可通过 NVIDIA NeMo 定制化</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-blue">Google Gemini</span></td>
+                    <td>Google Cloud</td>
+                    <td>云端推理模型</td>
+                    <td>2026年4月与 Google Cloud 合作集成，已在 Google Cloud Marketplace 上线</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-purple">OpenAI GPT</span></td>
+                    <td>OpenAI</td>
+                    <td>云端模型</td>
+                    <td>2026年2月首发公告中明确提及支持</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-gray">开源模型</span></td>
+                    <td>多源</td>
+                    <td>本地部署</td>
+                    <td>满足数据隐私要求严格的客户，支持 on-premises 部署</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>技术架构总览</h3>
+    <div class="arch-diagram">┌─────────────────────────────────────────────────┐
+│           AgentStack (编排主代理)                  │
+│     协调所有设计环节的智能体工作流                   │
+├─────────────────────────────────────────────────┤
+│         ChipStack AI Super Agent                  │
+│    (前端设计与验证 — 数字领域)                      │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐         │
+│  │RTL生成    │ │验证规划   │ │调试与修复  │         │
+│  │智能体     │ │智能体     │ │智能体     │         │
+│  └──────────┘ └──────────┘ └──────────┘         │
+│              ↓ 共享 ↓                             │
+│     ┌──────────────────┐                         │
+│     │  Mental Model    │ ← LLM 推理层             │
+│     │ (结构化知识库)     │   (Nemotron/Gemini/     │
+│     └──────────────────┘    GPT/开源模型)          │
+│              ↓                                    │
+│     ┌──────────────────┐                         │
+│     │ Cadence EDA 引擎  │ ← 工程准确性层           │
+│     │ (Xcelium/Jasper/ │   (签核级精度)            │
+│     │  Cerebrus等)     │                         │
+│     └──────────────────┘                         │
+├─────────────────────────────────────────────────┤
+│     安全层: NVIDIA OpenShell 运行时               │
+│     (沙箱化 / 治理 / IP保护)                      │
+└─────────────────────────────────────────────────┘</div>
+
+    <h3>NVIDIA — 最深度合作伙伴</h3>
+    <div class="card">
+        <p>NVIDIA 是 ChipStack 最核心的 AI 合作伙伴，合作涉及多个层面：</p>
+        <p style="margin-top: 10px;">• <strong>NVIDIA Nemotron 模型</strong>：Level-5 自主虚拟工程师的驱动模型</p>
+        <p>• <strong>NVIDIA OpenShell 运行时</strong>：沙箱化安全运行环境，保护敏感 IP</p>
+        <p>• <strong>NVIDIA 加速计算基础设施</strong>：为长时间运行的多智能体工作流提供算力</p>
+        <p>• <strong>NVIDIA 自身也是大客户</strong>：数千名工程师使用 ChipStack 智能体</p>
+    </div>
+
+    <h3>核心差异化：Mental Model 技术</h3>
+    <p>ChipStack 的真正技术壁垒<strong>不在于用了哪个 LLM，而在于其独创的 Mental Model 技术</strong>：</p>
+    <div class="card">
+        <p>• <strong>结构化知识表示</strong>：显式捕获设计意图、层次结构和关系</p>
+        <p>• <strong>持久真相源</strong>：作为所有智能体共享的知识基础，弥合人类意图与机器推理</p>
+        <p>• <strong>解决 LLM 短板</strong>：Cadence 研究表明，单纯依赖 LLM 无法可靠生成高质量 RTL</p>
+        <p>• <strong>LLM 提供推理，Mental Model + EDA 引擎提供准确性</strong>，两者结合才是核心竞争力</p>
+    </div>
+</section>
+
+<!-- ============ Part 3: Company Profile ============ -->
+<section id="company">
+    <h2><span class="num">3</span> ChipStack 公司档案</h2>
+    <div class="section-line"></div>
+
+    <div class="table-wrap">
+        <table>
+            <tbody>
+                <tr><td style="font-weight:600; width: 140px;">公司名称</td><td>ChipStack</td></tr>
+                <tr><td style="font-weight:600;">成立时间</td><td>2023 年</td></tr>
+                <tr><td style="font-weight:600;">总部位置</td><td>美国西雅图（Seattle, WA），孵化自 AI2 Incubator</td></tr>
+                <tr><td style="font-weight:600;">公司状态</td><td>2025年11月被 Cadence Design Systems 收购，团队整体并入</td></tr>
+                <tr><td style="font-weight:600;">团队规模</td><td>收购时约 20 人，全部加入 Cadence</td></tr>
+                <tr><td style="font-weight:600;">公司愿景</td><td>让芯片设计周期从 2-3 年压缩至数月内完成</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>融资情况</h3>
+    <div class="card">
+        <div class="funding-bar">
+            <div class="funding-segment" style="background: #2563eb; flex: 3;">Seed Round 1<br>Khosla Ventures (领投)</div>
+            <div class="funding-segment" style="background: #7c3aed; flex: 2;">Seed Round 2<br>Clear Ventures</div>
+            <div class="funding-segment" style="background: #059669; flex: 1.5;">其他投资方</div>
+        </div>
+        <p style="margin-top: 12px; font-size: 14px;">• 公开披露融资金额：<strong>超过 700 万美元</strong>（GeekWire 等媒体）</p>
+        <p style="font-size: 14px;">• Indexed.vc 数据库记录总额：<strong>2400 万美元</strong>（可能含未公开轮次）</p>
+        <p style="font-size: 14px;">• 投资方包括：AI2 Incubator、Khosla Ventures、Cerberus Capital Management、Clear Ventures 及天使投资人</p>
+        <p style="font-size: 14px; margin-top: 8px;">• 收购财务细节未披露，但投资方获得<strong>丰厚回报</strong></p>
+    </div>
+
+    <h3>核心创始团队</h3>
+
+    <div class="profile-card">
+        <div class="profile-avatar" style="background: linear-gradient(135deg, #2563eb, #7c3aed);">KH</div>
+        <div class="profile-info">
+            <h4>Kartik Hegde</h4>
+            <div class="role">CEO & 联合创始人 → 现 Cadence</div>
+            <p>伊利诺伊大学厄巴纳-香槟分校（UIUC）计算机科学博士（2022年），导师 Christopher W. Fletcher</p>
+            <p>研究方向：稀疏计算、高效加速器、软硬件协同设计</p>
+            <p>2019 年 Facebook（Meta）博士奖学金获得者</p>
+            <p>本科毕业于印度 NITK Surathkal</p>
+            <div class="tag-row">
+                <span class="tag">Arm</span>
+                <span class="tag">NVIDIA Research</span>
+                <span class="tag">Facebook AI Research</span>
+                <span class="tag">Facebook Reality Labs</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-card">
+        <div class="profile-avatar" style="background: linear-gradient(135deg, #059669, #0891b2);">HS</div>
+        <div class="profile-info">
+            <h4>Hamid Shojaei</h4>
+            <div class="role">CTO & 联合创始人 → 现 Cadence Distinguished Engineer</div>
+            <p>威斯康星大学麦迪逊分校计算机工程博士</p>
+            <p>17+ 年芯片设计与验证经验</p>
+            <p>Google <strong>TPU 项目</strong>成员，曾在 Lightmatter、Qualcomm 担任工程领导职务</p>
+            <p>现任 Cadence Distinguished Engineer，领导 ChipStack Agents 团队</p>
+            <p>DVCon 2026 主旨演讲嘉宾，Semiconductor Engineering 专栏作者</p>
+            <div class="tag-row">
+                <span class="tag">Google TPU</span>
+                <span class="tag">Lightmatter</span>
+                <span class="tag">Qualcomm</span>
+                <span class="tag">17+ 年经验</span>
+            </div>
+        </div>
+    </div>
+
+    <h3>Kartik Hegde 代表性学术论文</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>年份</th><th>论文</th><th>会议</th><th>主题</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>2023</td><td>Accelerating deep learning in the post-Moore's era</td><td>博士论文</td><td>深度学习加速</td></tr>
+                <tr><td>2023</td><td>Dynamic Reflexive Tiling</td><td><span class="badge badge-blue">ASPLOS</span></td><td>稀疏张量代数</td></tr>
+                <tr><td>2021</td><td>Mind Mappings</td><td><span class="badge badge-blue">ASPLOS</span></td><td>加速器映射空间搜索</td></tr>
+                <tr><td>2019</td><td>ExTensor</td><td><span class="badge badge-purple">MICRO</span></td><td>稀疏张量加速</td></tr>
+                <tr><td>2019</td><td>Buffets</td><td><span class="badge badge-blue">ASPLOS</span></td><td>可组合加速器存储</td></tr>
+                <tr><td>2018</td><td>Morph</td><td><span class="badge badge-purple">MICRO</span></td><td>灵活 3D-CNN 加速</td></tr>
+                <tr><td>2018</td><td>UCNN</td><td><span class="badge badge-orange">ISCA</span></td><td>神经网络计算复用</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>收购背景</h3>
+    <div class="card">
+        <p><strong>收购时间：</strong>2025 年 11 月 10 日宣布</p>
+        <p style="margin-top: 10px;"><strong>收购逻辑：</strong></p>
+        <p>• Cadence 与 ChipStack 此前已有<strong>多年合作</strong>，已集成 Xcelium 逻辑仿真器、Jasper 形式验证平台</p>
+        <p>• ChipStack 的 AI 代理技术<strong>直接嵌入</strong> Cadence 全流程验证解决方案</p>
+        <p>• Cadence 延续"并购扩张"战略，通过收购补强 AI 驱动验证能力</p>
+        <p>• 收购后仅 3 个月即推出 ChipStack AI Super Agent 产品</p>
+    </div>
+
+    <div class="quote-box">
+        <p>"作为 ChipStack 产品应用普及度不断提升，我们的雄心与愿景也日益壮大。当加入 Cadence 的机会出现时，我们清晰地认识到：这是将产品推向更广泛用户群体、同时更快拓展功能体系的最佳路径。"</p>
+        <div class="author">— Kartik Hegde，ChipStack CEO & 联合创始人</div>
+    </div>
+</section>
+
+<!-- ============ Part 4: Core Technology ============ -->
+<section id="tech">
+    <h2><span class="num">4</span> 核心技术深度解析</h2>
+    <div class="section-line"></div>
+
+    <h3>1. Mental Model（心智模型）— 核心技术发明</h3>
+    <div class="card">
+        <p><strong>本质：</strong>一种结构化知识表示方法，从 RTL 代码或规格说明中<strong>推断设计意图</strong>，显式捕获设计意图、层次结构和模块间关系。</p>
+        <p style="margin-top: 10px;"><strong>作用：</strong>作为所有 AI 智能体共享的"持久真相源"，弥合人类设计意图与 LLM 机器推理之间的鸿沟。</p>
+        <p style="margin-top: 10px;"><strong>价值：</strong>Cadence 研究表明，单纯依赖 LLM 无法可靠地生成高质量 RTL 和验证测试平台。Mental Model 将多模态规格说明、设计源码和历史上下文转化为统一知识库，使 LLM 生成内容的质量和准确性大幅提升。</p>
+    </div>
+
+    <h3>2. 智能体系列</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>智能体</th><th>功能描述</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><span class="badge badge-blue">Mental Model</span></td><td>核心知识表示层，所有智能体的共享基础</td></tr>
+                <tr><td><span class="badge badge-purple">RTL Generation Agent</span></td><td>规格→RTL 生成与 PPA 优化，RTL 升级流程</td></tr>
+                <tr><td><span class="badge badge-green">Formal Agent</span></td><td>生成形式验证计划及 SVA，用 Jasper 自动证明</td></tr>
+                <tr><td><span class="badge badge-green">UVM Agent</span></td><td>生成/升级动态验证计划及 UVM 序列、检查器、覆盖率</td></tr>
+                <tr><td><span class="badge badge-green">Unit Testing Agent</span></td><td>为给定设计生成 SystemVerilog 单元级测试</td></tr>
+                <tr><td><span class="badge badge-orange">Debug Agent</span></td><td>自主分析失败原因（root cause analysis），生成修复建议</td></tr>
+                <tr><td><span class="badge badge-purple">SoC Agent</span></td><td>生成 SoC fabric RTL 和 IP 及验证附属文件</td></tr>
+                <tr><td><span class="badge badge-gray">Signoff Agent</span></td><td>签核级验证</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>3. 更广泛的 AI Super Agent 产品组合</h3>
+    <div class="card">
+        <p>• <strong>ChipStack AI Super Agent</strong> — 前端数字设计与验证（RTL 生成、验证、调试）</p>
+        <p>• <strong>InnoStack AI Super Agent</strong> — 数字实现与签核</p>
+        <p>• <strong>ViraStack AI Super Agent</strong> — 定制/模拟设计</p>
+        <p>• <strong>AgentStack</strong> — 编排所有 Super Agent 的"主代理"（Head Agent）</p>
+    </div>
+
+    <h3>4. 关键性能数据汇总</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>场景</th><th>提升幅度</th><th>来源</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>整体设计与验证生产力</td><td>最高 10 倍</td><td>2026年2月首发公告</td></tr>
+                <tr><td>RTL 生成（vs 纯基础模型）</td><td>面积-24%，功耗-18%，准确100%</td><td>2026年9月 RTL 智能体</td></tr>
+                <tr><td>RTL 验证周期（NVIDIA 部署）</td><td>40 倍加速，5周→不到1天</td><td>2026年6月 Level-5</td></tr>
+                <tr><td>Altera 验证效率</td><td>约 10 倍提升</td><td>Altera 客户引言</td></tr>
+                <tr><td>Tenstorrent 形式验证</td><td>最高 4 倍加速</td><td>Tenstorrent 客户引言</td></tr>
+                <tr><td>ChipStack 独立运营时期</td><td>验证周期缩短 70%+</td><td>收购前数据</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>5. 早期客户与合作伙伴</h3>
+    <div class="card">
+        <div class="tag-row">
+            <span class="tag" style="background: #dbeafe; color: #1e40af;">NVIDIA — 最深度合作伙伴 + 客户</span>
+            <span class="tag" style="background: #d1fae5; color: #065f46;">Google Cloud — 云计算合作伙伴</span>
+            <span class="tag" style="background: #ede9fe; color: #5b21b6;">Altera — 早期部署客户</span>
+            <span class="tag" style="background: #fed7aa; color: #9a3412;">Qualcomm — 评估合作客户</span>
+            <span class="tag" style="background: #e2e8f0; color: #475569;">Tenstorrent — 早期部署客户</span>
+            <span class="tag" style="background: #fce7f3; color: #9d174d;">Honda R&D — 汽车SoC评估</span>
+        </div>
+    </div>
+</section>
+
+<!-- ============ Part 5: Timeline ============ -->
+<section id="timeline">
+    <h2><span class="num">5</span> 发展时间线</h2>
+    <div class="section-line"></div>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-date">2023 年</div>
+            <div class="timeline-content">ChipStack 成立，孵化自西雅图 AI2 Incubator。CEO Kartik Hegde（UIUC CS 博士）与 CTO Hamid Shojaei（Wisconsin-Madison CE 博士）联合创立。</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-date">2023-2025 年</div>
+            <div class="timeline-content">完成多轮种子融资（Khosla Ventures 领投、Clear Ventures 等），累计超 700 万美元。研发出基于生成式 AI 的验证产品，验证周期缩短 70%+，赢得头部芯片团队客户。</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-date">2025 年 11 月 10 日</div>
+            <div class="timeline-content">Cadence Design Systems 宣布收购 ChipStack，20 人团队全部加入 Cadence。双方此前已有多年技术集成合作。投资方获丰厚回报。</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-date">2026 年 2 月 10 日</div>
+            <div class="timeline-content">Cadence 发布 <strong>ChipStack AI Super Agent</strong> — 业界首个面向前端芯片设计与验证的智能体工作流。支持 NVIDIA Nemotron、OpenAI GPT 等多种模型。早期客户包括 Altera、NVIDIA、Qualcomm、Tenstorrent。</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-date">2026 年 4 月</div>
+            <div class="timeline-content">与 <strong>Google Cloud</strong> 合作（集成 Gemini 模型，上线 Google Cloud Marketplace）；与 <strong>NVIDIA</strong> 扩大合作（发布 AgentStack 编排框架，基于 Nemotron 模型 + 加速计算基础设施）。</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-date">2026 年 6 月（Computex）</div>
+            <div class="timeline-content">发布 <strong>Level-5 全自主虚拟工程师</strong> — 业界首款具备全自主芯片设计能力的 AI。基于 NVIDIA Nemotron 模型 + OpenShell 安全运行时。NVIDIA 部署实现 40 倍 RTL 验证加速（5周→不到1天）。</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-date">2026 年 9 月 22 日</div>
+            <div class="timeline-content">新增 <strong>RTL 生成智能体</strong> — 从规格到 RTL 生成与 PPA 优化。早期评估：面积缩减 24%、功耗降低 18%、功能准确 100%。本田研发中心作为汽车 SoC 领域早期客户。预计 2026 Q4 向早期体验客户开放。</div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ Summary ============ -->
+<section id="summary">
+    <h2><span class="num">6</span> 总结</h2>
+    <div class="section-line"></div>
+
+    <div class="card card-highlight">
+        <p>ChipStack 是一家典型的"学术创业"公司——两位创始人均为顶尖高校博士，在芯片设计和 AI 领域有深厚积累。公司从 2023 年成立到 2025 年被收购仅用约 2 年时间，核心原因在于：</p>
+        <p style="margin-top: 16px;"><strong>1. 技术方向精准：</strong>抓住了 LLM + EDA 融合的窗口期，用 Mental Model 解决了 LLM 不懂芯片设计的核心痛点。</p>
+        <p style="margin-top: 12px;"><strong>2. 团队背景过硬：</strong>CEO 有 Arm/NVIDIA/Meta 经历，CTO 有 Google TPU/Qualcomm 经历，17+ 年芯片验证经验。</p>
+        <p style="margin-top: 12px;"><strong>3. 产品快速落地：</strong>成立后即推出产品，验证周期缩短 70%，赢得头部客户信任。</p>
+        <p style="margin-top: 12px;"><strong>4. 与 Cadence 的生态协同：</strong>双方在收购前已有多年技术集成合作，收购是水到渠成。</p>
+    </div>
+
+    <p style="margin-top: 24px;">被 Cadence 收购后，ChipStack 的技术从"验证自动化"扩展到"RTL 生成 + PPA 优化 + 全自主虚拟工程师"，成为 Cadence AI 驱动芯片设计战略的核心引擎。底层 LLM 采用多模型灵活架构（NVIDIA Nemotron / Google Gemini / OpenAI GPT / 开源模型），但真正的技术护城河是 <strong>Mental Model 结构化知识表示 + Cadence 签核级 EDA 引擎</strong>。</p>
+</section>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <p>ChipStack AI Super Agent 完整调研报告 · 2026年10月9日</p>
+    <p style="margin-top: 8px;">本报告基于公开信息整理 · 数据来源：Cadence Newsroom、GeekWire、Crunchbase、Cadence 官方产品页等</p>
+    <p style="margin-top: 8px;"><a href="/" target="_blank">返回主页 →</a></p>
+</footer>
+
+</body>
+</html>

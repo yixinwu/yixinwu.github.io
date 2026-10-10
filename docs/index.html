@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>OpenPI 部署问题与解决方案</title>
     <style>
         body {
@@ -75,9 +75,26 @@
             margin: 10px 0;
             border: 1px solid #fca5a5;
         }
+        /* 返回主页按钮 */
+        .back-home {
+            position: fixed;
+            top: calc(12px + env(safe-area-inset-top, 0px));
+            left: calc(12px + env(safe-area-inset-left, 0px));
+            z-index: 1000;
+            display: inline-flex;
+            align-items: center;
+            padding: 9px 18px;
+            border-radius: 999px;
+            font-size: 14px;
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            box-shadow: 0 4px 14px rgba(52,152,219,.35);
+        }
     </style>
 </head>
 <body>
+    <a class="back-home" href="../index.html">← 返回主页</a>
     <h1>OpenPI 部署问题与解决方案（2026-01-16）</h1>
 
     <h2>项目背景</h2>
