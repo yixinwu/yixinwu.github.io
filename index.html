@@ -32,37 +32,8 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ===== Tab 栏 ===== */
-  .tabbar {
-    display: flex; gap: 6px;
-    width: 100%; max-width: 420px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 5px;
-    margin-bottom: 24px;
-    position: sticky; top: calc(10px + env(safe-area-inset-top));
-    z-index: 10;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-  .tabbar button {
-    appearance: none; border: 0; cursor: pointer;
-    font-size: 14px; font-family: inherit;
-    flex: 1;
-    padding: 10px 20px; border-radius: 999px;
-    background: transparent; color: var(--muted);
-    transition: background .18s ease, color .18s ease;
-    white-space: nowrap;
-  }
-  .tabbar button.active {
-    background: linear-gradient(135deg, var(--accent), #5a6cf0);
-    color: #fff;
-    box-shadow: 0 4px 16px rgba(124,140,255,.35);
-  }
-
-  /* ===== 主页 Tab ===== */
-  .wrap { width: 100%; max-width: 620px; }
+  /* ===== 主页 ===== */
+  .wrap { width: 100%; max-width: 620px; margin-top: 10px; }
   .card {
     background: var(--card);
     border: 1px solid var(--line);
@@ -104,23 +75,6 @@
   .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,140,255,.3); }
   footer { margin-top: 28px; text-align: center; color: #5c6270; font-size: 12px; }
 
-  /* ===== 报告 Tab ===== */
-  #tab-report {
-    width: 100%; max-width: 980px; flex: 1;
-    display: none; flex-direction: column;
-  }
-  #tab-report iframe {
-    width: 100%; flex: 1;
-    min-height: calc(100vh - 170px - env(safe-area-inset-top));
-    border: 1px solid var(--line); border-radius: 20px;
-    background: #f8fafc;
-  }
-  .report-open {
-    display: block; text-align: center;
-    font-size: 13px; color: var(--muted); margin-top: 12px;
-  }
-  .report-open a { color: var(--accent); }
-
   /* ===== 文章与报告列表 ===== */
   .articles { margin-top: 28px; text-align: left; }
   .articles h2 {
@@ -156,20 +110,13 @@
     .card { padding: 32px 20px; border-radius: 20px; }
     .avatar { width: 80px; height: 80px; font-size: 30px; }
     h1 { font-size: 24px; }
-    #tab-report iframe { border-radius: 14px; }
   }
 </style>
 </head>
 <body>
 
-  <!-- Tab 栏 -->
-  <nav class="tabbar" role="tablist">
-    <button id="btn-home" class="active" role="tab" aria-selected="true">🏠 主页</button>
-    <button id="btn-report" role="tab" aria-selected="false">📊 调研报告</button>
-  </nav>
-
-  <!-- Tab 1: 自我介绍 -->
-  <div class="wrap" id="tab-home">
+  <!-- 自我介绍 -->
+  <div class="wrap">
     <div class="card">
       <div class="avatar">Y</div>
       <h1>你好，我是 Yixin</h1>
@@ -239,48 +186,6 @@
 
     <footer>© 2026 Yixin · Powered by GitHub Pages</footer>
   </div>
-
-  <!-- Tab 2: 调研报告（内嵌加载 chipstack-report.html） -->
-  <div id="tab-report">
-    <iframe id="report-frame" src="about:blank" title="ChipStack AI Super Agent 完整调研报告"></iframe>
-    <p class="report-open">加载慢？<a href="docs/chipstack-report.html" target="_blank">在新标签页打开完整报告 →</a></p>
-  </div>
-
-<script>
-  (function () {
-    var btnHome = document.getElementById('btn-home');
-    var btnReport = document.getElementById('btn-report');
-    var tabHome = document.getElementById('tab-home');
-    var tabReport = document.getElementById('tab-report');
-    var frame = document.getElementById('report-frame');
-    var loaded = false;
-
-    function activate(btn, other) {
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      other.classList.remove('active');
-      other.setAttribute('aria-selected', 'false');
-    }
-
-    btnHome.addEventListener('click', function () {
-      activate(btnHome, btnReport);
-      tabHome.style.display = 'block';
-      tabReport.style.display = 'none';
-      document.title = 'Yixin · 个人主页';
-    });
-
-    btnReport.addEventListener('click', function () {
-      activate(btnReport, btnHome);
-      tabHome.style.display = 'none';
-      tabReport.style.display = 'flex';
-      if (!loaded) { frame.src = 'docs/chipstack-report.html'; loaded = true; }
-      document.title = '调研报告 · Yixin';
-    });
-
-    // 支持 /#/report 直达报告 Tab
-    if (location.hash === '#/report') btnReport.click();
-  })();
-</script>
 
 </body>
 </html>
